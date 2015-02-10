@@ -10,6 +10,7 @@ display_help()
     echo "  -h help message (this)"
     echo "  -v verbose"
     echo "  -d CERT_DIR  this is the cert directory, must exist, default : $CERT_DIR"
+    echo " HOSTNAME the hostname we are generating the self signed cert for"
 }
 
 
@@ -57,6 +58,17 @@ do
     esac
 done
 
+if [ $# -ne 1 ]; then
+    echo 'host required'
+    display_help
+    exit 1
+fi
+HOST=$1
+
+if [ $verbose ]; then
+    echo 'HOST is : '$HOST
+fi
+
 if [ ! -d $CERT_DIR ]; then
     echo 'CERT_DIR does not exist, maybe you need to run make_cert? :'$CERT_DIR
     display_help
@@ -73,5 +85,5 @@ cp $CERT_DIR/ca.pem $DOCKER_DIR
 cp $CERT_DIR/cert.pem $DOCKER_DIR
 cp $CERT_DIR/key.pem $DOCKER_DIR
 
-echo 'export DOCKER_HOST=tcp://:2376' > /etc/profile.d/docker.sh
+echo "export DOCKER_HOST=tcp://$HOST:2376" > /etc/profile.d/docker.sh
 echo 'export DOCKER_TLS_VERIFY=1' >> /etc/profile.d/docker.sh
