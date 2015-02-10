@@ -58,7 +58,7 @@ do
 done
 
 if [ ! -d $CERT_DIR ]; then
-    echo 'CERT_DIR doesn't exist, maybe you need to run make_cert? :'$CERT_DIR
+    echo 'CERT_DIR does not exist, maybe you need to run make_cert? :'$CERT_DIR
     display_help
     exit 1
 fi
