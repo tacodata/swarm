@@ -1,0 +1,77 @@
+#!/bin/sh
+# make the .docker directory and use the certs.
+# also create a docker.sh file in /etc/profile.d/docker.sh
+
+CERT_DIR=~/ssl-cert
+
+display_help()
+{
+    echo "Usage: $0 [ -h -v -d CERT_DIR]"
+    echo "  -h help message (this)"
+    echo "  -v verbose"
+    echo "  -d CERT_DIR  this is the cert directory, must exist, default : $CERT_DIR"
+}
+
+
+while :
+do
+    case "$1" in
+      -h | --help)
+	  display_help  # Call your function
+	  # no shifting needed here, we're done.
+	  exit 0
+	  ;;
+      -v | --verbose)
+          #  It's better to assign a string, than a number like "verbose=1"
+	  #  because if you're debugging script with "bash -x" code like this:
+	  #
+	  #    if [ "$verbose" ] ...
+	  #
+	  #  You will see:
+	  #
+	  #    if [ "verbose" ] ...
+	  #
+          #  Instead of cryptic
+	  #
+	  #    if [ "1" ] ...
+	  #
+	  verbose="verbose"
+	  shift
+	  ;;
+      -d | --directory)
+	  # output directory
+	  CERT_DIR="$2"
+	  shift 2
+	  ;;
+      --) # End of all options
+	  shift
+	  break;
+	  ;;
+      -*)
+	  echo "Error: Unknown option: $1" >&2
+	  exit 1
+	  ;;
+      *)  # No more options
+	  break
+	  ;;
+    esac
+done
+
+if [ ! -d $CERT_DIR ]; then
+    echo 'CERT_DIR doesn't exist, maybe you need to run make_cert? :'$CERT_DIR
+    display_help
+    exit 1
+fi
+
+if [ $verbose ]; then
+    echo 'CERT_DIR directory is : '$CERT_DIR
+fi
+
+DOCKER_DIR=~/.docker
+mkdir -pv $DOCKER_DIR
+cp $CERT_DIR/ca.pem $DOCKER_DIR
+cp $CERT_DIR/cert.pem $DOCKER_DIR
+cp $CERT_DIR/key.pem $DOCKER_DIR
+
+echo 'export DOCKER_HOST=tcp://:2376' > /etc/profile.d/docker.sh
+echo 'export DOCKER_TLS_VERIFY=1' >> /etc/profile.d/docker.sh
