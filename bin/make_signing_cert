@@ -5,11 +5,10 @@ CERT_DIR=~/ssl-cert
 
 display_help()
 {
-    echo "Usage: $0 [ -h -v -d CERT_DIR] HOSTNAME"
+    echo "Usage: $0 [ -h -v -d CERT_DIR]"
     echo "  -h help message (this)"
     echo "  -v verbose"
     echo "  -d CERT_DIR  this is the cert directory, must not exist, default : $CERT_DIR"
-    echo " HOSTNAME the hostname we are generating the signing cert for"
 }
 
 
@@ -57,22 +56,13 @@ do
     esac
 done
 
-if [ $# -ne 1 ]; then
-    echo 'host required'
-    display_help
-    exit 1
-fi
-
 if [ -d $CERT_DIR ]; then
     echo 'Output directory exists, remove it and run this again :'$CERT_DIR
     display_help
     exit 1
 fi
 
-HOST=$1
-
 if [ $verbose ]; then
-    echo 'HOST is : '$HOST
     echo 'CERT output directory is : '$CERT_DIR
 fi
 
