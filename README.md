@@ -8,6 +8,22 @@ $ mkdir ~/gocode; export GOPATH=~/gocode
 $ go get -u github.com/docker/swarm
 $ PATH=$PATH:$GOPATH/bin
 ```
+
+# before creating a swarm!
+
+Docker must be running on a tcp port that will be accessible from the swarm mamanger.
+This can be done by starting the docker service and binding it to
+the tcp, something like this:
+
+```
+service docker stop
+echo 'export DOCKER_OPTS="-H=0.0.0.0:2375 -H=unix:///var/run/docker.sock"' >> /etc/default/docker
+service docker start
+```
+
+Now the docker engine should be accepting insecure connections on tcp port 2375 as well
+as the unix domain socket.  Now that docker is listening, we can create a simple swarm:
+
 # once installed, create a cluster id (once)
 ```
 $ swarm create
@@ -25,6 +41,15 @@ swarm join --addr=108.61.222.182:2375 token://b44af7c37a3ab69fb72ba29d2b2e72ad
 ```
 swarm manage -H tcp://104.238.146.180:2375 token://b44af7c37a3ab69fb72ba29d2b2e72ad
 ```
+
+# at this point you have a simple swarm up.
+To create a docker container, you run a docker client and point it to the
+swarm manager.  In this case:
+
+```
+docker run -H tcp://104.238.146.180:2375
+```
+
 
 # for starting docker under tls:
 make the signing certificate, and all of the server/client certificates at
