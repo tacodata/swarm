@@ -2,10 +2,12 @@
 misc discovery work with swarm
 
 # putting swarm on a host
+```
 apt-get install -y golang git
 mkdir ~/gocode; export GOPATH=~/gocode
 go get -u github.com/docker/swarm
 PATH=$PATH:$GOPATH/bin
+```
 # once installed, create a cluster id (once)
 swarm create
 b44af7c37a3ab69fb72ba29d2b2e72ad
