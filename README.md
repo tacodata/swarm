@@ -69,6 +69,17 @@ make_cert -i 104.238.146.194 -v -d ~/ssl-cert/c3.tacodata.com c3.tacodata.com # 
 make_swarm_cert -i 104.238.146.180 -v -d ~/ssl-cert/w1.tacodata.com w1.tacodata.com
 ```
 
+or, more simply:
+
+```
+for i in w1 c1 c2 c3 c4; do
+    IP=`dig +short $i.tacodata.com`;
+    echo "$i $IP";
+    rm -rf ~/ssl-cert/$i.tacodata.com;
+    make_swarm_cert -i $IP -d ~/ssl-cert/$i.tacodata.com $i.tacodata.com;
+done
+```
+
 the first script makes a signing certificate, for self signing.  the second 3 scripts make a certificate for
 each of the 3 engines involved with this swarm.  the ip address and the fqdn are part of the
 certificate. the last script makes a certificate for the swarm manager.  it is different because
